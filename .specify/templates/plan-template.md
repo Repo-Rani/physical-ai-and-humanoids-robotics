@@ -31,7 +31,13 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+Constitution gates for Physical AI & Humanoid Robotics textbook project:
+- Content Accuracy & Technical Rigor: All technical explanations, ROS 2, Gazebo, Unity, NVIDIA Isaac, VLA, and AI concepts must be correct, verified, and cited. Code snippets must run, be well-documented, and safe for hardware deployment.
+- Educational Clarity & Accessibility: Ensure gradual progression from foundational Physical AI concepts to advanced humanoid robotics projects with clear learning outcomes and module objectives.
+- Consistency & Standards: Maintain uniform terminology for AI, robotics, and simulation concepts with proper glossary and formatting rules.
+- Lab & Hardware Guidelines: Verify hardware requirements (RTX PCs, Jetson kits, RealSense cameras, etc.) and cloud vs on-premise options are properly addressed.
+- Docusaurus Structure & Quality: Ensure chapters are navigable, searchable, and maintainable with proper metadata and interactive elements.
+- Code & Simulation Quality: Verify all ROS 2 packages, Gazebo simulations, Isaac pipelines, and VLA code examples are reproducible with safety warnings included.
 
 ## Project Structure
 

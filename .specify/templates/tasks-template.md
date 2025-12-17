@@ -150,12 +150,14 @@ Examples of foundational tasks (adjust based on your project):
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] TXXX [P] Documentation updates in docs/
-- [ ] TXXX Code cleanup and refactoring
+- [ ] TXXX [P] Documentation updates in docs/ ensuring alignment with Physical AI & Humanoid Robotics Constitution
+- [ ] TXXX Code cleanup and refactoring maintaining Content Accuracy & Technical Rigor
 - [ ] TXXX Performance optimization across all stories
 - [ ] TXXX [P] Additional unit tests (if requested) in tests/unit/
-- [ ] TXXX Security hardening
-- [ ] TXXX Run quickstart.md validation
+- [ ] TXXX Security hardening with safety warnings for real robot deployments
+- [ ] TXXX Run quickstart.md validation ensuring Educational Clarity & Accessibility
+- [ ] TXXX Verify consistency with uniform terminology and formatting standards
+- [ ] TXXX Test hardware requirements and simulation environments
 
 ---
 

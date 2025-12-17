@@ -1,0 +1,46 @@
+{
+  "name": "ai-and-humanoid-robotics-textbook",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "docusaurus": "docusaurus",
+    "start": "docusaurus start",
+    "build": "docusaurus build",
+    "swizzle": "docusaurus swizzle",
+    "deploy": "docusaurus deploy",
+    "clear": "docusaurus clear",
+    "serve": "docusaurus serve",
+    "write-translations": "docusaurus write-translations",
+    "write-heading-ids": "docusaurus write-heading-ids",
+    "lint:markdown": "markdownlint \"**/*.md\" --ignore node_modules",
+    "validate:frontmatter": "node scripts/validate-frontmatter.js",
+    "check:links": "npx broken-link-checker local build/ --filter-level 3",
+    "audit:a11y": "npx lighthouse http://localhost:3000 --only-categories=accessibility --output=json --output-path=./lighthouse-a11y.json"
+  },
+  "dependencies": {
+    "@docusaurus/core": "^3.0.0",
+    "@docusaurus/plugin-content-docs": "^3.0.0",
+    "@docusaurus/preset-classic": "^3.9.2",
+    "@docusaurus/theme-classic": "^3.0.0",
+    "@docusaurus/theme-mermaid": "^3.0.0",
+    "@mdx-js/react": "^3.0.0",
+    "clsx": "^2.0.0",
+    "prism-react-renderer": "^2.3.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "rehype-katex": "^7.0.0",
+    "remark-math": "^6.0.0"
+  },
+  "devDependencies": {
+    "@docusaurus/module-type-aliases": "^3.0.0",
+    "@docusaurus/tsconfig": "^3.0.0",
+    "@docusaurus/types": "^3.0.0",
+    "autoprefixer": "^10.4.22",
+    "markdownlint-cli": "^0.38.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.18"
+  },
+  "engines": {
+    "node": ">=18.0"
+  }
+}

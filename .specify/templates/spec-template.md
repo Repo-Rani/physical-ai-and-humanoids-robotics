@@ -80,6 +80,14 @@
 <!--
   ACTION REQUIRED: The content in this section represents placeholders.
   Fill them out with the right functional requirements.
+
+  IMPORTANT: All requirements must align with the Physical AI & Humanoid Robotics Constitution:
+  - Content Accuracy & Technical Rigor: Technical explanations must be correct and verifiable
+  - Educational Clarity & Accessibility: Requirements must support gradual learning progression
+  - Consistency & Standards: Use uniform terminology and formatting
+  - Lab & Hardware Guidelines: Include hardware and simulation requirements
+  - Docusaurus Structure & Quality: Ensure navigable and searchable content
+  - Code & Simulation Quality: Verify reproducibility and safety
 -->
 
 ### Functional Requirements
