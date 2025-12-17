@@ -48,7 +48,7 @@ const config = {
     algolia: null,
 
     navbar: {
-      title: 'Physical AI Textbook',
+      title: 'Humanoid Robotics',
       items: [
         {
           type: 'doc',

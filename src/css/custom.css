@@ -58,6 +58,213 @@
 --docusaurus-highlighted-code-line-bg: rgba(52, 211, 153, 0.15);
 }
 
+/* Footer specific styles */
+.footer {
+  background-color: #003b1d !important;
+  color: white;
+}
+
+[data-theme="dark"] .footer {
+  background-color: #002b15 !important;
+  color: white;
+}
+
+/* Footer branding text to match navbar */
+.footer__brand-text {
+  font-size: 1.5rem;
+  font-weight: 800;
+  background: linear-gradient(90deg, #4ade80, #2dd4bf);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradient-x 12s ease infinite;
+}
+
+/* Footer section headers */
+.footer__title {
+  color: white !important;
+  font-weight: 600;
+}
+
+/* Footer links */
+.footer__link {
+  color: #cbd5e1 !important;
+  transition: color 0.2s ease;
+}
+
+.footer__link:hover {
+  color: #4ade80 !important;
+}
+
+/* Footer newsletter input */
+.footer__newsletter-input {
+  background-color: white !important;
+  color: #1e293b !important;
+  border-color: #cbd5e1 !important;
+}
+
+/* Footer copyright text */
+.footer__copyright {
+  color: #94a3b8 !important;
+}
+
+/* Navbar logo gradient animation */
+@keyframes gradient-x {
+  0% {
+    background-size: 200% 200%;
+    background-position: 0% 50%;
+  }
+  50% {
+    background-size: 200% 200%;
+    background-position: 100% 50%;
+  }
+  100% {
+    background-size: 200% 200%;
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient-x {
+  background-size: 200% 200%;
+  animation: gradient-x 12s ease infinite;
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+
+/* Navbar styling */
+.navbar {
+  background-color: var(--hb-black) !important;
+  border-bottom: 1px solid rgba(21, 128, 61, 0.1) !important;
+  padding: 0.5rem 1rem !important;
+}
+
+[data-theme="dark"] .navbar {
+  background-color: #001f0f !important;
+  border-bottom: 1px solid rgba(22, 163, 74, 0.2) !important;
+}
+
+/* Responsive navbar styles */
+@media (max-width: 996px) {
+  .navbar {
+    padding: 0.5rem !important;
+  }
+
+  .navbar__items {
+    gap: 0.5rem !important;
+  }
+
+  .navbar__item {
+    font-size: 0.9rem !important;
+  }
+
+  .navbar__brand {
+    margin-right: 0.5rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar__items--right {
+    margin-left: 0.5rem !important;
+  }
+
+  .navbar-sidebar__brand {
+    padding: 1rem !important;
+  }
+
+  .menu__list-item {
+    padding: 0.75rem 1rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .navbar {
+    padding: 0.25rem !important;
+  }
+
+  .navbar__brand {
+    margin-right: 0.25rem !important;
+  }
+
+  .navbar__item {
+    font-size: 0.85rem !important;
+  }
+}
+
+.navbar__brand {
+  transition: transform 0.2s ease;
+}
+
+.navbar__brand:hover {
+  transform: scale(1.02);
+}
+
+.navbar__item {
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.navbar__link {
+  color: var(--hb-black-text) !important;
+  transition: all 0.2s ease;
+}
+
+[data-theme="dark"] .navbar__link {
+  color: #e2e8f0 !important;
+}
+
+.navbar__link:hover {
+  color: var(--ifm-color-primary) !important;
+  background-color: transparent !important;
+}
+
+[data-theme="dark"] .navbar__link:hover {
+  color: var(--ifm-color-primary-light) !important;
+}
+
+.navbar__toggle {
+  color: var(--hb-black-text) !important;
+}
+
+[data-theme="dark"] .navbar__toggle {
+  color: #e2e8f0 !important;
+}
+
+.navbar__items--right > *:not(:last-child) {
+  margin-right: 1rem;
+}
+
+.navbar__items--left > *:not(:first-child) {
+  margin-left: 1rem;
+}
+
+/* Mobile menu */
+.menu {
+  background-color: var(--hb-black) !important;
+}
+
+[data-theme="dark"] .menu {
+  background-color: #001f0f !important;
+}
+
+.menu__link {
+  color: var(--hb-black-text) !important;
+  transition: all 0.2s ease;
+}
+
+[data-theme="dark"] .menu__link {
+  color: #e2e8f0 !important;
+}
+
+.menu__link:hover {
+  color: var(--ifm-color-primary) !important;
+  background-color: rgba(21, 128, 61, 0.1) !important;
+}
+
+[data-theme="dark"] .menu__link:hover {
+  background-color: rgba(22, 163, 74, 0.1) !important;
+}
+
 
 
 
