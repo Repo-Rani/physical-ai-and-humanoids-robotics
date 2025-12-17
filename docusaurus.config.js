@@ -7,8 +7,8 @@ const config = {
   tagline: 'From Simulation to Reality',
   favicon: 'img/favicon.ico',
 
-  url: 'https://your-github-username.github.io',
-  baseUrl: '/ai-and-humanoid-robotics-hackathon/',
+  url: 'https://physical-ai-and-humanoids-robotics.vercel.app',
+  baseUrl: '/',
 
   organizationName: 'your-organization',
   projectName: 'ai-and-humanoid-robotics-hackathon',
