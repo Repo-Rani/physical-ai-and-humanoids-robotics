@@ -12,6 +12,7 @@ from datetime import datetime
 import cohere
 from qdrant_client import QdrantClient
 from openai import OpenAI
+import asyncio
 
 # ============================================================================
 # CONFIGURATION
@@ -68,6 +69,7 @@ class ChatRequest(BaseModel):
     message: str
     conversation_id: str
     selected_text: Optional[str] = None
+    language: Optional[str] = 'en'  # Default to English
 
 class Source(BaseModel):
     url: str
@@ -83,6 +85,15 @@ class ChatResponse(BaseModel):
 
 class ClearRequest(BaseModel):
     conversation_id: str
+
+class TranslateRequest(BaseModel):
+    text: str
+    target_language: str
+
+class TranslateResponse(BaseModel):
+    translated_text: str
+    source_language: Optional[str] = None
+    target_language: str
 
 # ============================================================================
 # RAG FUNCTIONS
@@ -133,19 +144,19 @@ def search_knowledge_base(query: str, top_k: int = 5) -> List[Dict]:
         traceback.print_exc()
         return []
 
-def generate_response(query: str, context_docs: List[Dict], conversation_history: List[Dict], selected_text: Optional[str] = None) -> str:
+def generate_response(query: str, context_docs: List[Dict], conversation_history: List[Dict], selected_text: Optional[str] = None, language: Optional[str] = None) -> str:
     """
     Generate response using OpenRouter AI
     """
     try:
         print("🤖 Generating response with OpenRouter (Mistral)...")
-        
+
         # Build context from retrieved documents
         context = "\n\n".join([
             f"Source: {doc['title']}\nContent: {doc['text'][:600]}..."
             for doc in context_docs[:3]
         ])
-        
+
         # Build conversation history (last 5 messages)
         history_messages = []
         for msg in conversation_history[-5:]:
@@ -153,7 +164,7 @@ def generate_response(query: str, context_docs: List[Dict], conversation_history
                 "role": msg["role"],
                 "content": msg["content"]
             })
-        
+
         # Construct system prompt
         system_prompt = """You are an expert AI tutor specializing in Humanoid Robotics and Physical AI.
 
@@ -185,19 +196,23 @@ RELEVANT DOCUMENTATION:
 {context}
 
 Please answer the question using the documentation context provided."""
-        
+
+        # Add language context if provided
+        if language and language != 'en':
+            user_prompt += f"\n\nPlease respond in {language} language."
+
         # Prepare messages for OpenRouter
         messages = [
             {"role": "system", "content": system_prompt}
         ]
-        
+
         # Add conversation history (if exists)
         if history_messages:
             messages.extend(history_messages[:-1])  # Exclude current question
-        
+
         # Add current question
         messages.append({"role": "user", "content": user_prompt})
-        
+
         # Call OpenRouter API
         response = openrouter_client.chat.completions.create(
             model=OPENROUTER_MODEL,
@@ -209,16 +224,70 @@ Please answer the question using the documentation context provided."""
                 "X-Title": "Humanoid Robotics Chatbot"
             }
         )
-        
+
         result = response.choices[0].message.content
         print(f"✅ Generated {len(result)} characters")
         return result
-    
+
     except Exception as e:
         print(f"❌ OpenRouter generation error: {e}")
         import traceback
         traceback.print_exc()
         return "I apologize, but I'm having trouble generating a response. Please try again or rephrase your question."
+
+
+def translate_text(text: str, target_language: str) -> str:
+    """
+    Translate text using OpenRouter AI
+    """
+    try:
+        print(f"🔄 Translating text to {target_language}...")
+
+        # Define language names for better translation quality
+        language_names = {
+            'en': 'English',
+            'ur': 'Urdu',
+            'ar': 'Arabic',
+            'es': 'Spanish',
+            'fr': 'French',
+            'de': 'German',
+            'zh': 'Chinese',
+            'ja': 'Japanese'
+        }
+
+        target_language_name = language_names.get(target_language, target_language)
+
+        # Construct translation prompt
+        translation_prompt = f"""Translate the following text to {target_language_name}.
+Maintain technical terminology where appropriate.
+Only return the translated text, no explanations.
+
+Text: {text}"""
+
+        # Call OpenRouter API for translation
+        response = openrouter_client.chat.completions.create(
+            model=OPENROUTER_MODEL,
+            messages=[
+                {"role": "system", "content": "You are a professional translator. Translate text accurately while maintaining the meaning and tone. Only return the translated text without any additional explanations."},
+                {"role": "user", "content": translation_prompt}
+            ],
+            temperature=0.3,  # Lower temperature for more consistent translations
+            max_tokens=1000,
+            extra_headers={
+                "HTTP-Referer": "https://physical-ai-and-humanoids-robotics.vercel.app",
+                "X-Title": "Humanoid Robotics Chatbot"
+            }
+        )
+
+        translated_text = response.choices[0].message.content
+        print(f"✅ Translated {len(text)} characters to {len(translated_text)} characters")
+        return translated_text
+
+    except Exception as e:
+        print(f"❌ Translation error: {e}")
+        import traceback
+        traceback.print_exc()
+        return text  # Return original text if translation fails
 
 # ============================================================================
 # API ENDPOINTS
@@ -271,7 +340,8 @@ async def chat_endpoint(request: ChatRequest):
             query=request.message,
             context_docs=search_results,
             conversation_history=conversation_history,
-            selected_text=request.selected_text
+            selected_text=request.selected_text,
+            language=request.language
         )
         
         # Add AI response to history
@@ -331,6 +401,37 @@ async def clear_history(request: ClearRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/api/v1/translate", response_model=TranslateResponse)
+async def translate_endpoint(request: TranslateRequest):
+    """
+    Translation endpoint - translates text to target language
+    """
+    try:
+        print(f"\n" + "="*60)
+        print(f"🔄 New translation request: {request.target_language}")
+        print(f"Text length: {len(request.text)} characters")
+        print("="*60)
+
+        # Perform translation
+        translated_text = translate_text(request.text, request.target_language)
+
+        print(f"✅ Translation completed successfully!")
+        print(f"Target language: {request.target_language}")
+        print(f"Translated text length: {len(translated_text)} characters")
+        print("="*60 + "\n")
+
+        return TranslateResponse(
+            translated_text=translated_text,
+            target_language=request.target_language
+        )
+
+    except Exception as e:
+        print(f"\n❌ CRITICAL ERROR in translation endpoint:")
+        import traceback
+        traceback.print_exc()
+        print("="*60 + "\n")
+        raise HTTPException(status_code=500, detail=f"Translation error: {str(e)}")
+
 @app.get("/api/v1/health")
 async def health_check():
     """
@@ -340,7 +441,7 @@ async def health_check():
         # Check Qdrant
         collection_info = qdrant_client.get_collection(COLLECTION_NAME)
         point_count = collection_info.points_count
-        
+
         return {
             "status": "healthy",
             "qdrant": {

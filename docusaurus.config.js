@@ -16,6 +16,22 @@ const config = {
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
 
+  // i18n configuration for multilingual support
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en', 'ur'],
+    localeConfigs: {
+      en: {
+        label: 'English',
+        direction: 'ltr',
+      },
+      ur: {
+        label: 'اردو',
+        direction: 'rtl',
+      },
+    },
+  },
+
   presets: [
     [
       'classic',
@@ -55,6 +71,10 @@ const config = {
           docId: 'intro',
           position: 'left',
           label: 'Textbook',
+        },
+        {
+          type: 'localeDropdown',
+          position: 'right',
         },
         {
           href: 'https://github.com/Repo-Rani/physical-ai-and-humanoids-robotics.git',

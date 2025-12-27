@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageCircle, X, Send, Bot, User, Loader2, ExternalLink, Trash2, Sparkles } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, User, Loader2, ExternalLink, Trash2, Sparkles, Globe, Languages, RotateCcw } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import TextSelectionHandler from './TextSelectionHandler';
 
@@ -37,6 +37,29 @@ const HumanoidChatbot = () => {
       sources: []
     }];
   });
+
+  // Language state and settings
+  const [selectedLanguage, setSelectedLanguage] = useState(() => {
+    const stored = localStorage.getItem('chatbot_language');
+    return stored || 'en';
+  });
+
+  // Translation state
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [originalMessages, setOriginalMessages] = useState([]);
+
+  // Language options for the dropdown
+  const languages = [
+    { code: 'en', name: 'English', flag: '🇺🇸' },
+    { code: 'ur', name: 'اردو', flag: '🇵🇰' },
+    { code: 'ar', name: 'العربية', flag: '🇸🇦' },
+    { code: 'es', name: 'Español', flag: '🇪🇸' },
+    { code: 'fr', name: 'Français', flag: '🇫🇷' },
+    { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
+    { code: 'zh', name: '中文', flag: '🇨🇳' },
+    { code: 'ja', name: '日本語', flag: '🇯🇵' }
+  ];
+
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
@@ -53,11 +76,16 @@ const HumanoidChatbot = () => {
     scrollToBottom();
   }, [messages]);
 
+  // Save language preference to localStorage
+  useEffect(() => {
+    localStorage.setItem('chatbot_language', selectedLanguage);
+  }, [selectedLanguage]);
+
   const handleSend = async (customMessage = null, useSelectedText = false) => {
-    const messageToSend = typeof customMessage === 'string' 
-      ? customMessage 
+    const messageToSend = typeof customMessage === 'string'
+      ? customMessage
       : (customMessage || input);
-    
+
     if (!messageToSend || typeof messageToSend !== 'string' || !messageToSend.trim() || isTyping) {
       return;
     }
@@ -67,7 +95,8 @@ const HumanoidChatbot = () => {
       text: messageToSend,
       timestamp: new Date(),
       sources: [],
-      selectedContext: useSelectedText ? selectedTextContext : null
+      selectedContext: useSelectedText ? selectedTextContext : null,
+      language: selectedLanguage // Store the language of the message
     };
 
     setMessages(prev => [...prev, userMessage]);
@@ -84,7 +113,8 @@ const HumanoidChatbot = () => {
         body: JSON.stringify({
           message: currentInput,
           conversation_id: conversationId,
-          selected_text: useSelectedText ? selectedTextContext : null
+          selected_text: useSelectedText ? selectedTextContext : null,
+          language: selectedLanguage // Include language in the request
         })
       });
 
@@ -98,7 +128,8 @@ const HumanoidChatbot = () => {
         type: 'ai',
         text: data.response || 'I apologize, but I encountered an error. Please try again.',
         timestamp: new Date(data.timestamp),
-        sources: data.sources || []
+        sources: data.sources || [],
+        language: selectedLanguage // Store the language of the AI response
       };
 
       setMessages(prev => [...prev, aiMessage]);
@@ -108,7 +139,8 @@ const HumanoidChatbot = () => {
         type: 'ai',
         text: '⚠️ Sorry, I am currently unable to process your request. Please make sure the backend server is running on http://localhost:8000',
         timestamp: new Date(),
-        sources: []
+        sources: [],
+        language: selectedLanguage
       };
       setMessages(prev => [...prev, errorMessage]);
     } finally {
@@ -132,7 +164,8 @@ const HumanoidChatbot = () => {
         type: 'ai',
         text: 'Welcome to Humanoid Robotics & Physical AI Learning! 🤖 Ask me anything about robotics, AI, or our documentation.',
         timestamp: new Date(),
-        sources: []
+        sources: [],
+        language: selectedLanguage
       }]);
 
       localStorage.removeItem('chatbot_messages');
@@ -149,9 +182,82 @@ const HumanoidChatbot = () => {
     }
   };
 
-  const handleTextSelection = (text) => {
+  // Function to translate a single message
+  const translateMessage = async (text, targetLanguage) => {
+    try {
+      const response = await fetch("http://localhost:8000/api/v1/translate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          text: text,
+          target_language: targetLanguage
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.translated_text;
+    } catch (error) {
+      console.error('Translation error:', error);
+      return text; // Return original text if translation fails
+    }
+  };
+
+  // Function to translate entire conversation
+  const translateConversation = async (targetLanguage) => {
+    if (isTranslating) return;
+
+    setIsTranslating(true);
+
+    try {
+      // Save original messages before translation
+      if (originalMessages.length === 0) {
+        setOriginalMessages([...messages]);
+      }
+
+      const translatedMessages = [];
+
+      for (const message of messages) {
+        const translatedText = await translateMessage(message.text, targetLanguage);
+        translatedMessages.push({
+          ...message,
+          text: translatedText,
+          language: targetLanguage
+        });
+      }
+
+      setMessages(translatedMessages);
+      setSelectedLanguage(targetLanguage);
+    } catch (error) {
+      console.error('Conversation translation error:', error);
+    } finally {
+      setIsTranslating(false);
+    }
+  };
+
+  // Function to switch back to original language
+  const switchToOriginalLanguage = () => {
+    if (originalMessages.length > 0) {
+      setMessages([...originalMessages]);
+      setOriginalMessages([]);
+      setSelectedLanguage('en'); // Default to English
+    }
+  };
+
+  const handleTextSelection = (text, detectedLanguage = null) => {
     setSelectedTextContext(text);
     setIsOpen(true);
+
+    // If a language was detected from the selected text, use it for the conversation
+    if (detectedLanguage && detectedLanguage !== selectedLanguage) {
+      setSelectedLanguage(detectedLanguage);
+    }
+
     const prefilledQuestion = `Can you explain this: "${text.length > 100 ? text.substring(0, 100) + '...' : text}"`;
     setInput(prefilledQuestion);
   };
@@ -230,9 +336,9 @@ const HumanoidChatbot = () => {
                 }}></div>
               </div>
               <div>
-                <h3 style={{ 
-                  color: 'white', 
-                  fontWeight: '600', 
+                <h3 style={{
+                  color: 'white',
+                  fontWeight: '600',
                   fontSize: '16px',
                   margin: 0,
                   marginBottom: '2px'
@@ -241,8 +347,8 @@ const HumanoidChatbot = () => {
                 </h3>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <Sparkles style={{ width: '12px', height: '12px', color: '#a7f3d0' }} />
-                  <p style={{ 
-                    color: '#d1fae5', 
+                  <p style={{
+                    color: '#d1fae5',
                     fontSize: '11px',
                     margin: 0,
                     fontWeight: '500'
@@ -252,7 +358,116 @@ const HumanoidChatbot = () => {
                 </div>
               </div>
             </div>
-            <div style={{ display: 'flex', gap: '8px' }}>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              {/* Language Selector Dropdown */}
+              <div style={{ position: 'relative' }} className="language-selector">
+                <button
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '8px 12px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    transition: 'background 0.2s',
+                    color: 'white',
+                    fontSize: '12px'
+                  }}
+                  onMouseEnter={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.25)'}
+                  onMouseLeave={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.15)'}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const dropdown = e.currentTarget.nextElementSibling;
+                    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+                  }}
+                >
+                  <Languages style={{ width: '14px', height: '14px' }} />
+                  {languages.find(lang => lang.code === selectedLanguage)?.flag} {languages.find(lang => lang.code === selectedLanguage)?.name}
+                </button>
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '100%',
+                    right: 0,
+                    background: 'white',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                    zIndex: 10001,
+                    minWidth: '180px',
+                    display: 'none',
+                    marginTop: '4px'
+                  }}
+                  className="language-dropdown"
+                >
+                  {languages.map((lang) => (
+                    <div
+                      key={lang.code}
+                      style={{
+                        padding: '10px 12px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        fontSize: '13px',
+                        color: selectedLanguage === lang.code ? '#059669' : '#374151',
+                        backgroundColor: selectedLanguage === lang.code ? '#f0fdf4' : 'white',
+                        borderBottom: lang.code !== languages[languages.length - 1].code ? '1px solid #f3f4f6' : 'none',
+                        transition: 'background-color 0.2s'
+                      }}
+                      onMouseEnter={(e) => e.target.style.backgroundColor = '#f9fafb'}
+                      onMouseLeave={(e) => e.target.style.backgroundColor = selectedLanguage === lang.code ? '#f0fdf4' : 'white'}
+                      onClick={() => {
+                        if (lang.code !== selectedLanguage) {
+                          translateConversation(lang.code);
+                        }
+                        document.querySelector('.language-dropdown').style.display = 'none';
+                      }}
+                    >
+                      <span>{lang.flag}</span>
+                      <span>{lang.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Translation Button */}
+              <button
+                onClick={() => {
+                  if (originalMessages.length > 0) {
+                    switchToOriginalLanguage();
+                  } else {
+                    translateConversation(selectedLanguage);
+                  }
+                }}
+                title={originalMessages.length > 0 ? 'Switch to original language' : 'Translate conversation'}
+                disabled={isTranslating}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '8px',
+                  cursor: isTranslating ? 'not-allowed' : 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'background 0.2s',
+                  color: 'white',
+                  opacity: isTranslating ? 0.6 : 1
+                }}
+                onMouseEnter={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.25)'}
+                onMouseLeave={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.15)'}
+              >
+                {isTranslating ? (
+                  <Loader2 style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} />
+                ) : originalMessages.length > 0 ? (
+                  <RotateCcw style={{ width: '16px', height: '16px' }} />
+                ) : (
+                  <Globe style={{ width: '16px', height: '16px' }} />
+                )}
+              </button>
+
               <button
                 onClick={handleClearHistory}
                 title="Clear chat history"
@@ -349,13 +564,14 @@ const HumanoidChatbot = () => {
                     style={{
                       borderRadius: '16px',
                       padding: '14px 18px',
-                      boxShadow: msg.type === 'ai' 
-                        ? '0 2px 8px rgba(0,0,0,0.08)' 
+                      boxShadow: msg.type === 'ai'
+                        ? '0 2px 8px rgba(0,0,0,0.08)'
                         : '0 4px 12px rgba(59,130,246,0.3)',
                       background: msg.type === 'ai'
                         ? 'white'
                         : 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)',
-                      border: msg.type === 'ai' ? '1px solid #e5e7eb' : 'none'
+                      border: msg.type === 'ai' ? '1px solid #e5e7eb' : 'none',
+                      direction: ['ar', 'ur'].includes(msg.language) ? 'rtl' : 'ltr' // RTL support for Arabic and Urdu
                     }}
                   >
                     {msg.type === 'ai' && (

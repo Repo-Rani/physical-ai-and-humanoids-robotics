@@ -15,7 +15,15 @@
     "lint:markdown": "markdownlint \"**/*.md\" --ignore node_modules",
     "validate:frontmatter": "node scripts/validate-frontmatter.js",
     "check:links": "npx broken-link-checker local build/ --filter-level 3",
-    "audit:a11y": "npx lighthouse http://localhost:3000 --only-categories=accessibility --output=json --output-path=./lighthouse-a11y.json"
+    "audit:a11y": "npx lighthouse http://localhost:3000 --only-categories=accessibility --output=json --output-path=./lighthouse-a11y.json",
+    "i18n:write": "docusaurus write-translations --locale en",
+    "i18n:urdu": "docusaurus write-translations --locale ur",
+    "start:en": "docusaurus start --locale en",
+    "start:ur": "docusaurus start --locale ur",
+    "build:en": "docusaurus build --locale en",
+    "build:ur": "docusaurus build --locale ur",
+    "build:i18n": "docusaurus build --locale en && docusaurus build --locale ur",
+    "translate-docs": "python translate_docs.py"
   },
   "dependencies": {
     "@docusaurus/core": "^3.0.0",

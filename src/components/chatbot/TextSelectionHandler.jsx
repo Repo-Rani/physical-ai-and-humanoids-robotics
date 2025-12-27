@@ -48,7 +48,22 @@ const TextSelectionHandler = ({ onTextSelected }) => {
 
   const handleAskAboutSelection = () => {
     if (onTextSelected && selectedText) {
-      onTextSelected(selectedText);
+      // Detect text language for proper handling (basic detection based on character ranges)
+      const detectLanguage = (text) => {
+        // Simple language detection based on character ranges
+        const arabicRegex = /[\u0600-\u06FF]/; // Arabic/Persian/Urdu characters
+        const chineseRegex = /[\u4E00-\u9FFF]/; // Chinese characters
+        const japaneseRegex = /[\u3040-\u309F\u30A0-\u30FF]/; // Hiragana/Katakana
+
+        if (arabicRegex.test(text)) return 'ar'; // Also covers Urdu
+        if (chineseRegex.test(text)) return 'zh';
+        if (japaneseRegex.test(text)) return 'ja';
+        return 'en'; // Default to English
+      };
+
+      const detectedLanguage = detectLanguage(selectedText);
+
+      onTextSelected(selectedText, detectedLanguage);
       setIsVisible(false);
       window.getSelection().removeAllRanges();
     }
