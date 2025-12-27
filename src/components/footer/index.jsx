@@ -5,7 +5,7 @@ export default function Footer () {
             <div className='flex flex-wrap justify-between gap-8 md:gap-6'>
                 <div className='max-w-80'>
                     <div className="text-2xl font-extrabold mb-4 footer__brand-text">
-                        <span>
+                        <span className="text-white hover:translate-x-4 hover:text-green-700  transition-all cursor-pointer">
                             Humanoid Robotics
                         </span>
                     </div>

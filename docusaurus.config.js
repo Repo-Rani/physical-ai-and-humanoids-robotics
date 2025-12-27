@@ -57,7 +57,7 @@ const config = {
           label: 'Textbook',
         },
         {
-          href: 'https://github.com/your-repo/ai-and-humanoid-robotics-hackathon',
+          href: 'https://github.com/Repo-Rani/physical-ai-and-humanoids-robotics.git',
           label: 'GitHub',
           position: 'right',
         },

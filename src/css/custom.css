@@ -137,6 +137,8 @@
   background-color: var(--hb-black) !important;
   border-bottom: 1px solid rgba(21, 128, 61, 0.1) !important;
   padding: 0.5rem 1rem !important;
+  /* z-index: -10; */
+
 }
 
 [data-theme="dark"] .navbar {

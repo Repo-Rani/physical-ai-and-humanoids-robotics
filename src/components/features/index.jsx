@@ -43,7 +43,7 @@ export default function Features  () {
             </style>
 
             <section className="py-20 px-4 bg-black flex flex-col justify-center items-center gap-6 bg-[url('https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/hero/green-gradient-bg.svg')] bg-top bg-no-repeat">
-                <button className='px-4 h-8 border border-gray-800 text-slate-200 text-xs rounded-lg'>Features</button>
+                <button className='px-4 h-8 border border-gray-800 text-slate-200 text-xs hover:bg-gray-300 transition hover:text-green-700 rounded-lg'>Features</button>
                 <h2 className="text-3xl md:text-[40px]/12 font-medium text-gray-100 max-w-lg text-center leading-tight">AI Agents That Automate and Accelerate Growth.</h2>
                 <p className='text-base/7 text-gray-200 max-w-xl text-center'>Streamline operations, boost productivity, and scale effortlessly - all powered by intelligent automation.</p>
                 <div className="relative max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">

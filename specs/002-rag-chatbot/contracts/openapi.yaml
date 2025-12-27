@@ -1,0 +1,81 @@
+# OpenAPI Contract: RAG Chatbot Backend API
+
+## /chat (POST)
+**Description**: Process user query and return AI response with source citations
+
+**Request Body**:
+```json
+{
+  "message": "string (user query)",
+  "conversation_history": [
+    {
+      "sender_type": "string (USER|AI)",
+      "content": "string (message content)",
+      "timestamp": "string (ISO date)"
+    }
+  ]
+}
+```
+
+**Response**:
+```json
+{
+  "response": "string (AI-generated response)",
+  "success": "boolean",
+  "sources": [
+    {
+      "url": "string (source document URL)",
+      "title": "string (document title)",
+      "score": "number (relevance score)",
+      "text_preview": "string (text snippet)"
+    }
+  ],
+  "model_used": "string (model identifier)"
+}
+```
+
+## /health (GET)
+**Description**: Check health status of external services
+
+**Response**:
+```json
+{
+  "status": "string (overall status)",
+  "services": {
+    "qdrant": "string (status)",
+    "cohere": "string (status)",
+    "openrouter": "string (status)"
+  }
+}
+```
+
+## /collection-stats (GET)
+**Description**: Get statistics about the Qdrant collection
+
+**Response**:
+```json
+{
+  "point_count": "integer (number of vectors in collection)",
+  "dimensions": "integer (vector dimensions)",
+  "distance": "string (distance metric)",
+  "collection_name": "string"
+}
+```
+
+## / (GET)
+**Description**: API status and available endpoints
+
+**Response**:
+```json
+{
+  "status": "string (API operational status)",
+  "version": "string (API version)",
+  "endpoints": [
+    {
+      "path": "string (endpoint path)",
+      "method": "string (HTTP method)",
+      "description": "string (endpoint purpose)"
+    }
+  ]
+}
+```

@@ -4,7 +4,7 @@ import NavbarTitle from './Title';
 
 const Navbar = (props) => {
   return (
-    <nav className="navbar shadow-md transition-all duration-300">
+    <nav className="">
       <OriginalNavbar {...props} />
     </nav>
   );
