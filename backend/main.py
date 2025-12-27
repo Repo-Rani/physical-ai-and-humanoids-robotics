@@ -13,15 +13,16 @@ import cohere
 from qdrant_client import QdrantClient
 from openai import OpenAI
 import asyncio
+from dotenv import load_dotenv
 
 # ============================================================================
 # CONFIGURATION
 # ============================================================================
-
+load_dotenv()
 # Cohere & Qdrant Configuration
-COHERE_API_KEY = "jIuKchKF76I843bUTuB0ZR2gSTImVHLlCaYbzUdr"
-QDRANT_URL = "https://11e17f22-ead2-4a46-847b-dc4c47d4fff1.europe-west3-0.gcp.cloud.qdrant.io"
-QDRANT_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.kOKUvVERRo2H_EXDOF5fv9ajxISlO2gNy6XkBvosh8k"
+COHERE_API_KEY = os.getenv("COHERE_API_KEY")
+QDRANT_URL = os.getenv("QDRANT_URL")
+QDRANT_API_KEY =os.getenv("QDRANT_API_KEY")
 COLLECTION_NAME = "physical_ai_humanoids_robotics"
 EMBED_MODEL = "embed-english-v3.0"
 
@@ -401,37 +402,6 @@ async def clear_history(request: ClearRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/api/v1/translate", response_model=TranslateResponse)
-async def translate_endpoint(request: TranslateRequest):
-    """
-    Translation endpoint - translates text to target language
-    """
-    try:
-        print(f"\n" + "="*60)
-        print(f"🔄 New translation request: {request.target_language}")
-        print(f"Text length: {len(request.text)} characters")
-        print("="*60)
-
-        # Perform translation
-        translated_text = translate_text(request.text, request.target_language)
-
-        print(f"✅ Translation completed successfully!")
-        print(f"Target language: {request.target_language}")
-        print(f"Translated text length: {len(translated_text)} characters")
-        print("="*60 + "\n")
-
-        return TranslateResponse(
-            translated_text=translated_text,
-            target_language=request.target_language
-        )
-
-    except Exception as e:
-        print(f"\n❌ CRITICAL ERROR in translation endpoint:")
-        import traceback
-        traceback.print_exc()
-        print("="*60 + "\n")
-        raise HTTPException(status_code=500, detail=f"Translation error: {str(e)}")
-
 @app.get("/api/v1/health")
 async def health_check():
     """
@@ -441,7 +411,7 @@ async def health_check():
         # Check Qdrant
         collection_info = qdrant_client.get_collection(COLLECTION_NAME)
         point_count = collection_info.points_count
-
+        
         return {
             "status": "healthy",
             "qdrant": {
