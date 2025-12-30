@@ -12,15 +12,18 @@ from datetime import datetime
 import cohere
 from qdrant_client import QdrantClient
 from openai import OpenAI
+from dotenv import load_dotenv  
+
+load_dotenv()
 
 # ============================================================================
 # CONFIGURATION
 # ============================================================================
 
 # Cohere & Qdrant Configuration
-COHERE_API_KEY = "jIuKchKF76I843bUTuB0ZR2gSTImVHLlCaYbzUdr"
-QDRANT_URL = "https://11e17f22-ead2-4a46-847b-dc4c47d4fff1.europe-west3-0.gcp.cloud.qdrant.io"
-QDRANT_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.kOKUvVERRo2H_EXDOF5fv9ajxISlO2gNy6XkBvosh8k"
+COHERE_API_KEY = os.getenv("COHERE_API_KEY")
+QDRANT_URL = os.getenv("QDRANT_URL")
+QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
 COLLECTION_NAME = "physical_ai_humanoids_robotics"
 EMBED_MODEL = "embed-english-v3.0"
 

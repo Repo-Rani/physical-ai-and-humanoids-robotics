@@ -6,48 +6,59 @@ import TextSelectionHandler from './TextSelectionHandler';
 const HumanoidChatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedTextContext, setSelectedTextContext] = useState(null);
-  const [conversationId] = useState(() => {
-    const stored = localStorage.getItem('chatbot_conversation_id');
-    if (stored) return stored;
-    const newId = uuidv4();
-    localStorage.setItem('chatbot_conversation_id', newId);
-    return newId;
-  });
-  const [messages, setMessages] = useState(() => {
-    const stored = localStorage.getItem('chatbot_messages');
-    if (stored) {
-      try {
-        return JSON.parse(stored).map(msg => ({
-          ...msg,
-          timestamp: new Date(msg.timestamp)
-        }));
-      } catch {
-        return [{
-          type: 'ai',
-          text: 'Welcome to Humanoid Robotics & Physical AI Learning! 🤖 Ask me anything about robotics, AI, or our documentation.',
-          timestamp: new Date(),
-          sources: []
-        }];
-      }
-    }
-    return [{
-      type: 'ai',
-      text: 'Welcome to Humanoid Robotics & Physical AI Learning! 🤖 Ask me anything about robotics, AI, or our documentation.',
-      timestamp: new Date(),
-      sources: []
-    }];
-  });
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
+  
+  // ✅ FIXED: Initialize without localStorage
+  const [isClient, setIsClient] = useState(false);
+  const [conversationId, setConversationId] = useState(null);
+  const [messages, setMessages] = useState([{
+    type: 'ai',
+    text: 'Welcome to Humanoid Robotics & Physical AI Learning! 🤖 Ask me anything about robotics, AI, or our documentation.',
+    timestamp: new Date(),
+    sources: []
+  }]);
+
+  // ✅ FIXED: Load data from localStorage on client-side only
+  useEffect(() => {
+    setIsClient(true);
+    
+    // Load conversation ID
+    const storedId = localStorage.getItem('chatbot_conversation_id');
+    if (storedId) {
+      setConversationId(storedId);
+    } else {
+      const newId = uuidv4();
+      localStorage.setItem('chatbot_conversation_id', newId);
+      setConversationId(newId);
+    }
+
+    // Load messages
+    const storedMessages = localStorage.getItem('chatbot_messages');
+    if (storedMessages) {
+      try {
+        const parsedMessages = JSON.parse(storedMessages).map(msg => ({
+          ...msg,
+          timestamp: new Date(msg.timestamp)
+        }));
+        setMessages(parsedMessages);
+      } catch (error) {
+        console.error('Failed to parse stored messages:', error);
+      }
+    }
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // Save messages to localStorage whenever they change
   useEffect(() => {
-    localStorage.setItem('chatbot_messages', JSON.stringify(messages));
-  }, [messages]);
+    if (isClient && messages.length > 0) {
+      localStorage.setItem('chatbot_messages', JSON.stringify(messages));
+    }
+  }, [messages, isClient]);
 
   useEffect(() => {
     scrollToBottom();
@@ -135,7 +146,9 @@ const HumanoidChatbot = () => {
         sources: []
       }]);
 
-      localStorage.removeItem('chatbot_messages');
+      if (isClient) {
+        localStorage.removeItem('chatbot_messages');
+      }
 
       fetch("http://localhost:8000/api/v1/chat/clear", {
         method: "POST",
@@ -155,6 +168,11 @@ const HumanoidChatbot = () => {
     const prefilledQuestion = `Can you explain this: "${text.length > 100 ? text.substring(0, 100) + '...' : text}"`;
     setInput(prefilledQuestion);
   };
+
+  // ✅ Show loading state during SSR
+  if (!isClient) {
+    return null; // Or return a simple placeholder
+  }
 
   return (
     <>
