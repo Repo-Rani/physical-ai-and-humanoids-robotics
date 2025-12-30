@@ -20,17 +20,10 @@ model = OpenAIChatCompletionsModel(
     openai_client=provider
 )
 
-<<<<<<< HEAD
-cohere_client = cohere.Client(os.getenv("COHERE_API_KEY"))
-qdrant = QdrantClient(
-    url=os.getenv("QDRANT_URL"),
-    api_key=os.getenv("QDRANT_API_KEY")
-=======
 cohere_client = cohere.Client("jIuKchKF76I843bUTuB0ZR2gSTImVHLlCaYbzUdr")
 qdrant = QdrantClient(
     url="https://11e17f22-ead2-4a46-847b-dc4c47d4fff1.europe-west3-0.gcp.cloud.qdrant.io",
     api_key="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.kOKUvVERRo2H_EXDOF5fv9ajxISlO2gNy6XkBvosh8k"
->>>>>>> 001-multilingual-chatbot
 )
 
 

@@ -3,8 +3,4 @@ __pycache__/
 *.pyc
 .venv/
 venv/
-<<<<<<< HEAD
 *.log
-=======
-*.log
->>>>>>> 001-multilingual-chatbot

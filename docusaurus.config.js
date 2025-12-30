@@ -16,25 +16,6 @@ const config = {
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
 
-<<<<<<< HEAD
-  // i18n configuration for multilingual support
-  i18n: {
-    defaultLocale: 'en',
-    locales: ['en', 'ur'],
-    localeConfigs: {
-      en: {
-        label: 'English',
-        direction: 'ltr',
-      },
-      ur: {
-        label: 'اردو',
-        direction: 'rtl',
-      },
-    },
-  },
-
-=======
->>>>>>> 001-multilingual-chatbot
   presets: [
     [
       'classic',
@@ -76,13 +57,6 @@ const config = {
           label: 'Textbook',
         },
         {
-<<<<<<< HEAD
-          type: 'localeDropdown',
-          position: 'right',
-        },
-        {
-=======
->>>>>>> 001-multilingual-chatbot
           href: 'https://github.com/Repo-Rani/physical-ai-and-humanoids-robotics.git',
           label: 'GitHub',
           position: 'right',
