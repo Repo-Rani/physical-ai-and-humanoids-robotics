@@ -1,5 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
+<<<<<<< HEAD
 import { MessageCircle, X, Send, Bot, User, Loader2, ExternalLink, Trash2, Sparkles, Globe, Languages, RotateCcw } from 'lucide-react';
+=======
+import { MessageCircle, X, Send, Bot, User, Loader2, ExternalLink, Trash2, Sparkles } from 'lucide-react';
+>>>>>>> 001-multilingual-chatbot
 import { v4 as uuidv4 } from 'uuid';
 import TextSelectionHandler from './TextSelectionHandler';
 
@@ -37,6 +41,7 @@ const HumanoidChatbot = () => {
       sources: []
     }];
   });
+<<<<<<< HEAD
 
   // Language state and settings
   const [selectedLanguage, setSelectedLanguage] = useState(() => {
@@ -60,6 +65,8 @@ const HumanoidChatbot = () => {
     { code: 'ja', name: '日本語', flag: '🇯🇵' }
   ];
 
+=======
+>>>>>>> 001-multilingual-chatbot
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
@@ -76,6 +83,7 @@ const HumanoidChatbot = () => {
     scrollToBottom();
   }, [messages]);
 
+<<<<<<< HEAD
   // Save language preference to localStorage
   useEffect(() => {
     localStorage.setItem('chatbot_language', selectedLanguage);
@@ -86,6 +94,13 @@ const HumanoidChatbot = () => {
       ? customMessage
       : (customMessage || input);
 
+=======
+  const handleSend = async (customMessage = null, useSelectedText = false) => {
+    const messageToSend = typeof customMessage === 'string' 
+      ? customMessage 
+      : (customMessage || input);
+    
+>>>>>>> 001-multilingual-chatbot
     if (!messageToSend || typeof messageToSend !== 'string' || !messageToSend.trim() || isTyping) {
       return;
     }
@@ -95,8 +110,12 @@ const HumanoidChatbot = () => {
       text: messageToSend,
       timestamp: new Date(),
       sources: [],
+<<<<<<< HEAD
       selectedContext: useSelectedText ? selectedTextContext : null,
       language: selectedLanguage // Store the language of the message
+=======
+      selectedContext: useSelectedText ? selectedTextContext : null
+>>>>>>> 001-multilingual-chatbot
     };
 
     setMessages(prev => [...prev, userMessage]);
@@ -113,8 +132,12 @@ const HumanoidChatbot = () => {
         body: JSON.stringify({
           message: currentInput,
           conversation_id: conversationId,
+<<<<<<< HEAD
           selected_text: useSelectedText ? selectedTextContext : null,
           language: selectedLanguage // Include language in the request
+=======
+          selected_text: useSelectedText ? selectedTextContext : null
+>>>>>>> 001-multilingual-chatbot
         })
       });
 
@@ -128,8 +151,12 @@ const HumanoidChatbot = () => {
         type: 'ai',
         text: data.response || 'I apologize, but I encountered an error. Please try again.',
         timestamp: new Date(data.timestamp),
+<<<<<<< HEAD
         sources: data.sources || [],
         language: selectedLanguage // Store the language of the AI response
+=======
+        sources: data.sources || []
+>>>>>>> 001-multilingual-chatbot
       };
 
       setMessages(prev => [...prev, aiMessage]);
@@ -139,8 +166,12 @@ const HumanoidChatbot = () => {
         type: 'ai',
         text: '⚠️ Sorry, I am currently unable to process your request. Please make sure the backend server is running on http://localhost:8000',
         timestamp: new Date(),
+<<<<<<< HEAD
         sources: [],
         language: selectedLanguage
+=======
+        sources: []
+>>>>>>> 001-multilingual-chatbot
       };
       setMessages(prev => [...prev, errorMessage]);
     } finally {
@@ -164,8 +195,12 @@ const HumanoidChatbot = () => {
         type: 'ai',
         text: 'Welcome to Humanoid Robotics & Physical AI Learning! 🤖 Ask me anything about robotics, AI, or our documentation.',
         timestamp: new Date(),
+<<<<<<< HEAD
         sources: [],
         language: selectedLanguage
+=======
+        sources: []
+>>>>>>> 001-multilingual-chatbot
       }]);
 
       localStorage.removeItem('chatbot_messages');
@@ -182,6 +217,7 @@ const HumanoidChatbot = () => {
     }
   };
 
+<<<<<<< HEAD
   // Function to translate a single message
   const translateMessage = async (text, targetLanguage) => {
     try {
@@ -258,6 +294,11 @@ const HumanoidChatbot = () => {
       setSelectedLanguage(detectedLanguage);
     }
 
+=======
+  const handleTextSelection = (text) => {
+    setSelectedTextContext(text);
+    setIsOpen(true);
+>>>>>>> 001-multilingual-chatbot
     const prefilledQuestion = `Can you explain this: "${text.length > 100 ? text.substring(0, 100) + '...' : text}"`;
     setInput(prefilledQuestion);
   };
@@ -336,9 +377,15 @@ const HumanoidChatbot = () => {
                 }}></div>
               </div>
               <div>
+<<<<<<< HEAD
                 <h3 style={{
                   color: 'white',
                   fontWeight: '600',
+=======
+                <h3 style={{ 
+                  color: 'white', 
+                  fontWeight: '600', 
+>>>>>>> 001-multilingual-chatbot
                   fontSize: '16px',
                   margin: 0,
                   marginBottom: '2px'
@@ -347,8 +394,13 @@ const HumanoidChatbot = () => {
                 </h3>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <Sparkles style={{ width: '12px', height: '12px', color: '#a7f3d0' }} />
+<<<<<<< HEAD
                   <p style={{
                     color: '#d1fae5',
+=======
+                  <p style={{ 
+                    color: '#d1fae5', 
+>>>>>>> 001-multilingual-chatbot
                     fontSize: '11px',
                     margin: 0,
                     fontWeight: '500'
@@ -358,6 +410,7 @@ const HumanoidChatbot = () => {
                 </div>
               </div>
             </div>
+<<<<<<< HEAD
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
               {/* Language Selector Dropdown */}
               <div style={{ position: 'relative' }} className="language-selector">
@@ -468,6 +521,9 @@ const HumanoidChatbot = () => {
                 )}
               </button>
 
+=======
+            <div style={{ display: 'flex', gap: '8px' }}>
+>>>>>>> 001-multilingual-chatbot
               <button
                 onClick={handleClearHistory}
                 title="Clear chat history"
@@ -564,14 +620,23 @@ const HumanoidChatbot = () => {
                     style={{
                       borderRadius: '16px',
                       padding: '14px 18px',
+<<<<<<< HEAD
                       boxShadow: msg.type === 'ai'
                         ? '0 2px 8px rgba(0,0,0,0.08)'
+=======
+                      boxShadow: msg.type === 'ai' 
+                        ? '0 2px 8px rgba(0,0,0,0.08)' 
+>>>>>>> 001-multilingual-chatbot
                         : '0 4px 12px rgba(59,130,246,0.3)',
                       background: msg.type === 'ai'
                         ? 'white'
                         : 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)',
+<<<<<<< HEAD
                       border: msg.type === 'ai' ? '1px solid #e5e7eb' : 'none',
                       direction: ['ar', 'ur'].includes(msg.language) ? 'rtl' : 'ltr' // RTL support for Arabic and Urdu
+=======
+                      border: msg.type === 'ai' ? '1px solid #e5e7eb' : 'none'
+>>>>>>> 001-multilingual-chatbot
                     }}
                   >
                     {msg.type === 'ai' && (

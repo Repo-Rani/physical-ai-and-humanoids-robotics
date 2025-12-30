@@ -48,6 +48,7 @@ const TextSelectionHandler = ({ onTextSelected }) => {
 
   const handleAskAboutSelection = () => {
     if (onTextSelected && selectedText) {
+<<<<<<< HEAD
       // Detect text language for proper handling (basic detection based on character ranges)
       const detectLanguage = (text) => {
         // Simple language detection based on character ranges
@@ -64,6 +65,9 @@ const TextSelectionHandler = ({ onTextSelected }) => {
       const detectedLanguage = detectLanguage(selectedText);
 
       onTextSelected(selectedText, detectedLanguage);
+=======
+      onTextSelected(selectedText);
+>>>>>>> 001-multilingual-chatbot
       setIsVisible(false);
       window.getSelection().removeAllRanges();
     }

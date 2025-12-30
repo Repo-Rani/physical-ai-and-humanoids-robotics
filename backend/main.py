@@ -12,17 +12,28 @@ from datetime import datetime
 import cohere
 from qdrant_client import QdrantClient
 from openai import OpenAI
+<<<<<<< HEAD
 import asyncio
 from dotenv import load_dotenv
+=======
+>>>>>>> 001-multilingual-chatbot
 
 # ============================================================================
 # CONFIGURATION
 # ============================================================================
+<<<<<<< HEAD
 load_dotenv()
 # Cohere & Qdrant Configuration
 COHERE_API_KEY = os.getenv("COHERE_API_KEY")
 QDRANT_URL = os.getenv("QDRANT_URL")
 QDRANT_API_KEY =os.getenv("QDRANT_API_KEY")
+=======
+
+# Cohere & Qdrant Configuration
+COHERE_API_KEY = "jIuKchKF76I843bUTuB0ZR2gSTImVHLlCaYbzUdr"
+QDRANT_URL = "https://11e17f22-ead2-4a46-847b-dc4c47d4fff1.europe-west3-0.gcp.cloud.qdrant.io"
+QDRANT_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.kOKUvVERRo2H_EXDOF5fv9ajxISlO2gNy6XkBvosh8k"
+>>>>>>> 001-multilingual-chatbot
 COLLECTION_NAME = "physical_ai_humanoids_robotics"
 EMBED_MODEL = "embed-english-v3.0"
 
@@ -70,7 +81,10 @@ class ChatRequest(BaseModel):
     message: str
     conversation_id: str
     selected_text: Optional[str] = None
+<<<<<<< HEAD
     language: Optional[str] = 'en'  # Default to English
+=======
+>>>>>>> 001-multilingual-chatbot
 
 class Source(BaseModel):
     url: str
@@ -87,6 +101,7 @@ class ChatResponse(BaseModel):
 class ClearRequest(BaseModel):
     conversation_id: str
 
+<<<<<<< HEAD
 class TranslateRequest(BaseModel):
     text: str
     target_language: str
@@ -96,6 +111,8 @@ class TranslateResponse(BaseModel):
     source_language: Optional[str] = None
     target_language: str
 
+=======
+>>>>>>> 001-multilingual-chatbot
 # ============================================================================
 # RAG FUNCTIONS
 # ============================================================================
@@ -145,19 +162,31 @@ def search_knowledge_base(query: str, top_k: int = 5) -> List[Dict]:
         traceback.print_exc()
         return []
 
+<<<<<<< HEAD
 def generate_response(query: str, context_docs: List[Dict], conversation_history: List[Dict], selected_text: Optional[str] = None, language: Optional[str] = None) -> str:
+=======
+def generate_response(query: str, context_docs: List[Dict], conversation_history: List[Dict], selected_text: Optional[str] = None) -> str:
+>>>>>>> 001-multilingual-chatbot
     """
     Generate response using OpenRouter AI
     """
     try:
         print("🤖 Generating response with OpenRouter (Mistral)...")
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> 001-multilingual-chatbot
         # Build context from retrieved documents
         context = "\n\n".join([
             f"Source: {doc['title']}\nContent: {doc['text'][:600]}..."
             for doc in context_docs[:3]
         ])
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> 001-multilingual-chatbot
         # Build conversation history (last 5 messages)
         history_messages = []
         for msg in conversation_history[-5:]:
@@ -165,7 +194,11 @@ def generate_response(query: str, context_docs: List[Dict], conversation_history
                 "role": msg["role"],
                 "content": msg["content"]
             })
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> 001-multilingual-chatbot
         # Construct system prompt
         system_prompt = """You are an expert AI tutor specializing in Humanoid Robotics and Physical AI.
 
@@ -197,15 +230,20 @@ RELEVANT DOCUMENTATION:
 {context}
 
 Please answer the question using the documentation context provided."""
+<<<<<<< HEAD
 
         # Add language context if provided
         if language and language != 'en':
             user_prompt += f"\n\nPlease respond in {language} language."
 
+=======
+        
+>>>>>>> 001-multilingual-chatbot
         # Prepare messages for OpenRouter
         messages = [
             {"role": "system", "content": system_prompt}
         ]
+<<<<<<< HEAD
 
         # Add conversation history (if exists)
         if history_messages:
@@ -214,6 +252,16 @@ Please answer the question using the documentation context provided."""
         # Add current question
         messages.append({"role": "user", "content": user_prompt})
 
+=======
+        
+        # Add conversation history (if exists)
+        if history_messages:
+            messages.extend(history_messages[:-1])  # Exclude current question
+        
+        # Add current question
+        messages.append({"role": "user", "content": user_prompt})
+        
+>>>>>>> 001-multilingual-chatbot
         # Call OpenRouter API
         response = openrouter_client.chat.completions.create(
             model=OPENROUTER_MODEL,
@@ -225,17 +273,26 @@ Please answer the question using the documentation context provided."""
                 "X-Title": "Humanoid Robotics Chatbot"
             }
         )
+<<<<<<< HEAD
 
         result = response.choices[0].message.content
         print(f"✅ Generated {len(result)} characters")
         return result
 
+=======
+        
+        result = response.choices[0].message.content
+        print(f"✅ Generated {len(result)} characters")
+        return result
+    
+>>>>>>> 001-multilingual-chatbot
     except Exception as e:
         print(f"❌ OpenRouter generation error: {e}")
         import traceback
         traceback.print_exc()
         return "I apologize, but I'm having trouble generating a response. Please try again or rephrase your question."
 
+<<<<<<< HEAD
 
 def translate_text(text: str, target_language: str) -> str:
     """
@@ -290,6 +347,8 @@ Text: {text}"""
         traceback.print_exc()
         return text  # Return original text if translation fails
 
+=======
+>>>>>>> 001-multilingual-chatbot
 # ============================================================================
 # API ENDPOINTS
 # ============================================================================
@@ -341,8 +400,12 @@ async def chat_endpoint(request: ChatRequest):
             query=request.message,
             context_docs=search_results,
             conversation_history=conversation_history,
+<<<<<<< HEAD
             selected_text=request.selected_text,
             language=request.language
+=======
+            selected_text=request.selected_text
+>>>>>>> 001-multilingual-chatbot
         )
         
         # Add AI response to history
