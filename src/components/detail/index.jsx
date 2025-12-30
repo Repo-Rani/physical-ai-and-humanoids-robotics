@@ -10,7 +10,7 @@ const Details = () => {
 
       {/* Hero Content */}
         <div className="flex items-center justify-center mb-6 animate-fadeIn">
-          <div className="flex items-center gap-2 text-[12px] text-green-800 bg-[var(--color-badge-background-top)] border border-orange-200 rounded-full px-4 py-1 shadow-sm">
+          <div className="flex items-center gap-2 text-[12px] text-green-800  border border-green-200 rounded-full px-4 py-1 shadow-sm">
             <svg
               width="16"
               height="16"

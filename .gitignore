@@ -11,6 +11,7 @@ build/
 .env.development.local
 .env.test.local
 .env.production.local
+.env.example
 
 # IDE files
 .vscode/
@@ -39,3 +40,48 @@ npm-debug.log*
 **/node_modules/**
 **/.docusaurus/**
 **/build/**
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Pytest
+.pytest_cache/
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+.hypothesis/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Chatbot backend specific
+chatbot-backend/.env
+chatbot-backend/venv/
+chatbot-backend/__pycache__/
+chatbot-backend/*.pyc

@@ -231,6 +231,33 @@ We welcome contributions from the robotics community!
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 
+## 🤖 RAG Chatbot Integration
+
+The textbook now includes an AI-powered chatbot that allows students to ask questions about the content and receive contextual answers with citations.
+
+### Features
+- 💬 **Natural Language Queries**: Ask questions in plain English about any topic in the textbook
+- 📚 **Cited Responses**: All answers include links to the original textbook sections
+- 🔍 **Context-Aware**: Select text on the page and ask specific questions about it
+- 📱 **Mobile Responsive**: Works seamlessly on desktop, tablet, and mobile devices
+- ⚡ **Fast Responses**: Answers delivered in under 3 seconds with RAG (Retrieval-Augmented Generation)
+- 🎓 **Educational Focus**: AI tutor specifically trained on Physical AI and Robotics concepts
+
+### How to Use
+1. Look for the chatbot icon (💬) in the bottom-right corner of any textbook page
+2. Click to open the chat interface
+3. Type your question about Physical AI, ROS 2, simulation, NVIDIA Isaac, or VLA models
+4. Receive a contextual answer with citations to relevant textbook sections
+5. For specific content, select text on the page and click "💬 Ask about this"
+
+### Technology Stack
+- **Backend**: FastAPI with Google Gemini, Cohere embeddings, and Qdrant vector database
+- **Frontend**: React component integrated with Docusaurus
+- **RAG Pipeline**: Retrieval-Augmented Generation for accurate, cited responses
+- **Deployment**: Backend on Render.com, frontend on GitHub Pages/Vercel
+
+For setup and deployment instructions, see the [RAG Chatbot Deployment Guide](specs/003-rag-chatbot/deployment.md).
+
 ## 📋 Roadmap
 
 ### v1.0.0 (Current) - December 2025
