@@ -1,4 +1,4 @@
-export default function Features  () {
+export default function Features() {
     const featuresData = [
         {
             icon: <svg className='text-white' xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /><path d="m9 12 2 2 4-4" /></svg>,
@@ -39,21 +39,238 @@ export default function Features  () {
 
                 * {
                     font-family: "Poppins", sans-serif;
-                }`}
+                }
+
+                @keyframes fadeInUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(30px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+
+                @keyframes slideInFromLeft {
+                    from {
+                        opacity: 0;
+                        transform: translateX(-50px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateX(0);
+                    }
+                }
+
+                @keyframes pulse {
+                    0%, 100% {
+                        opacity: 1;
+                    }
+                    50% {
+                        opacity: 0.8;
+                    }
+                }
+
+                @keyframes float {
+                    0%, 100% {
+                        transform: translateY(0px);
+                    }
+                    50% {
+                        transform: translateY(-10px);
+                    }
+                }
+
+                @keyframes scaleIn {
+                    from {
+                        opacity: 0;
+                        transform: scale(0.9);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: scale(1);
+                    }
+                }
+
+                @keyframes shimmer {
+                    0% {
+                        background-position: -1000px 0;
+                    }
+                    100% {
+                        background-position: 1000px 0;
+                    }
+                }
+
+                @keyframes shimmerOnce {
+                    0% {
+                        background-position: -1000px 0;
+                    }
+                    100% {
+                        background-position: 1000px 0;
+                    }
+                }
+
+                .animate-fade-in-up {
+                    animation: fadeInUp 0.8s ease-out forwards;
+                }
+
+                .animate-slide-in {
+                    animation: slideInFromLeft 0.8s ease-out forwards;
+                }
+
+                .animate-scale-in {
+                    animation: scaleIn 0.6s ease-out forwards;
+                }
+
+                .feature-card {
+                    position: relative;
+                    overflow: hidden;
+                    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                }
+
+                .feature-card::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: -100%;
+                    width: 100%;
+                    height: 100%;
+                    background: linear-gradient(90deg, transparent, rgba(21, 128, 61, 0.1), transparent);
+                    transition: left 0.6s;
+                }
+
+                .feature-card:hover::before {
+                    left: 100%;
+                }
+
+                .feature-card:hover {
+                    transform: translateY(-8px) scale(1.02);
+                    box-shadow: 0 20px 40px rgba(21, 128, 61, 0.2), 0 0 20px rgba(22, 163, 74, 0.15);
+                    border-color: rgba(21, 128, 61, 0.5);
+                }
+
+                .icon-wrapper {
+                    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                }
+
+                .feature-card:hover .icon-wrapper {
+                    transform: scale(1.15) rotate(5deg);
+                }
+
+                .badge-button {
+                    position: relative;
+                    overflow: hidden;
+                    transition: all 0.3s ease;
+                }
+
+                .badge-button::before {
+                    content: '';
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    width: 0;
+                    height: 0;
+                    border-radius: 50%;
+                    background: rgba(21, 128, 61, 0.2);
+                    transform: translate(-50%, -50%);
+                    transition: width 0.4s, height 0.4s;
+                }
+
+                .badge-button:hover::before {
+                    width: 300px;
+                    height: 300px;
+                }
+
+                .badge-button:hover {
+                    border-color: #15803d;
+                    color: #15803d;
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 12px rgba(21, 128, 61, 0.2);
+                }
+
+                .heading-gradient {
+                    background: linear-gradient(135deg, #ffffff 0%, #d1fae5 50%, #ffffff 100%);
+                    background-size: 200% auto;
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                    animation: shimmerOnce 5s linear forwards;
+                    animation-iteration-count: 1;
+                }
+
+                .stagger-1 { animation-delay: 0.1s; }
+                .stagger-2 { animation-delay: 0.2s; }
+                .stagger-3 { animation-delay: 0.3s; }
+                .stagger-4 { animation-delay: 0.4s; }
+                .stagger-5 { animation-delay: 0.5s; }
+                .stagger-6 { animation-delay: 0.6s; }
+                `}
             </style>
 
-            <section className="py-20 px-4 bg-black flex flex-col justify-center items-center gap-6 bg-[url('https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/hero/green-gradient-bg.svg')] bg-top bg-no-repeat">
-                <button className='px-4 h-8 border border-gray-800 text-slate-200 text-xs hover:bg-gray-300 transition hover:text-green-700 rounded-lg'>Features</button>
-                <h2 className="text-3xl md:text-[40px]/12 font-medium text-gray-100 max-w-lg text-center leading-tight">AI Agents That Automate and Accelerate Growth.</h2>
-                <p className='text-base/7 text-gray-200 max-w-xl text-center'>Streamline operations, boost productivity, and scale effortlessly - all powered by intelligent automation.</p>
-                <div className="relative max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+            <section className="py-20 px-4 bg-black flex flex-col justify-center items-center gap-6 bg-[url('https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/hero/green-gradient-bg.svg')] bg-top bg-no-repeat relative overflow-hidden">
+                {/* Decorative Background Elements */}
+                <div className="absolute inset-0 pointer-events-none">
+                    <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-green-600/5 rounded-full blur-3xl"></div>
+                    <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-green-500/5 rounded-full blur-3xl"></div>
+                </div>
+
+                {/* Badge */}
+                <button className='badge-button px-6 h-10 border border-gray-700 text-slate-200 text-sm font-semibold rounded-xl relative z-10 animate-fade-in-up backdrop-blur-sm bg-black/20'>
+                    ✨ Features
+                </button>
+
+                {/* Heading */}
+                <h2 className="heading-gradient text-3xl md:text-[42px]/tight font-bold max-w-2xl text-center leading-tight animate-fade-in-up stagger-1 relative z-10">
+                    AI Agents That Automate and Accelerate Growth
+                </h2>
+
+                {/* Description */}
+                <p className='text-base/7 text-gray-300 max-w-2xl text-center font-medium animate-fade-in-up stagger-2 relative z-10'>
+                    Streamline operations, boost productivity, and scale effortlessly - all powered by intelligent automation.
+                </p>
+
+                {/* Features Grid */}
+                <div className="relative max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 z-10">
                     {featuresData.map((feature, index) => (
-                        <div key={index} className='bg-linear-to-b from-[#020204] to-[#191130] border border-gray-700 rounded-lg p-6 space-y-3 hover:-translate-y-1 transition duration-300'>
-                            {feature.icon}
-                            <p className='font-medium text-lg text-gray-100'>{feature.title}</p>
-                            <p className='text-sm/5 text-gray-200'>{feature.description}</p>
+                        <div 
+                            key={index} 
+                            className={`feature-card bg-gradient-to-br from-[#0a0a0a] via-[#0d1117] to-[#0a0a0a] border-2 border-gray-800/50 rounded-2xl p-8 space-y-4 animate-scale-in stagger-${index + 1} backdrop-blur-sm`}
+                            style={{
+                                animationDelay: `${index * 0.1}s`,
+                                opacity: 0,
+                                animationFillMode: 'forwards'
+                            }}
+                        >
+                            {/* Icon Container */}
+                            <div className="icon-wrapper w-14 h-14 rounded-xl bg-gradient-to-br from-green-600 to-green-700 flex items-center justify-center shadow-lg shadow-green-600/30">
+                                {feature.icon}
+                            </div>
+
+                            {/* Title */}
+                            <h3 className='font-bold text-xl text-gray-100 tracking-tight'>
+                                {feature.title}
+                            </h3>
+
+                            {/* Description */}
+                            <p className='text-sm/6 text-gray-400 font-medium'>
+                                {feature.description}
+                            </p>
+
+                            {/* Decorative Bottom Line */}
+                            <div className="pt-3">
+                                <div className="h-1 w-16 bg-gradient-to-r from-green-600 to-green-400 rounded-full"></div>
+                            </div>
                         </div>
                     ))}
+                </div>
+
+                {/* Bottom Decorative Element */}
+                <div className="mt-12 relative z-10 animate-fade-in-up stagger-6">
+                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                        <div className="w-2 h-2 bg-green-600 rounded-full animate-pulse"></div>
+                        <span className="font-semibold">Powered by Advanced AI Technology</span>
+                        <div className="w-2 h-2 bg-green-600 rounded-full animate-pulse"></div>
+                    </div>
                 </div>
             </section>
         </>

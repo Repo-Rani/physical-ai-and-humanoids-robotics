@@ -3,6 +3,7 @@ import Features from "../features";
 import Details from "../detail";
 import Footer from "../footer";
 import Link from "@docusaurus/Link";
+import { MovingBorderDemo } from "../borderdemo/borderDemo";
 
 const Card = ({ img, name, role, bio, items = [] }) => {
   const [visible, setVisible] = React.useState(false);
@@ -159,6 +160,10 @@ export default function HeroSection() {
       {/* Features */}
       <section>
         <Features />
+      </section>
+
+      <section>
+        <MovingBorderDemo/>
       </section>
 
       {/* Details */}
