@@ -1,6 +1,7 @@
 """
 FastAPI Backend for Humanoid Robotics Chatbot
 Integrates with Cohere, Qdrant, and OpenRouter AI
+Railway-Optimized Version
 """
 
 from fastapi import FastAPI, HTTPException
@@ -9,9 +10,6 @@ from pydantic import BaseModel
 from typing import List, Optional, Dict
 import os
 from datetime import datetime
-import cohere
-from qdrant_client import QdrantClient
-from openai import OpenAI
 from dotenv import load_dotenv  
 
 load_dotenv()
@@ -21,25 +19,53 @@ load_dotenv()
 # ============================================================================
 
 # Cohere & Qdrant Configuration
-COHERE_API_KEY = os.getenv("COHERE_API_KEY")
-QDRANT_URL = os.getenv("QDRANT_URL")
-QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
+COHERE_API_KEY = os.getenv("COHERE_API_KEY", "")
+QDRANT_URL = os.getenv("QDRANT_URL", "")
+QDRANT_API_KEY = os.getenv("QDRANT_API_KEY", "")
 COLLECTION_NAME = "physical_ai_humanoids_robotics"
 EMBED_MODEL = "embed-english-v3.0"
 
 # OpenRouter Configuration
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "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")
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
 OPENROUTER_MODEL = "mistralai/devstral-2512:free"
 
-# Initialize clients
-cohere_client = cohere.Client(COHERE_API_KEY)
-qdrant_client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
+# Initialize clients with error handling
+cohere_client = None
+qdrant_client = None
+openrouter_client = None
 
-# Initialize OpenRouter client using OpenAI SDK
-openrouter_client = OpenAI(
-    api_key=OPENROUTER_API_KEY,
-    base_url="https://openrouter.ai/api/v1"
-)
+try:
+    import cohere
+    if COHERE_API_KEY:
+        cohere_client = cohere.Client(COHERE_API_KEY)
+        print("✅ Cohere initialized")
+    else:
+        print("⚠️ Cohere API key missing - RAG disabled")
+except Exception as e:
+    print(f"⚠️ Cohere initialization failed: {e}")
+
+try:
+    from qdrant_client import QdrantClient
+    if QDRANT_URL and QDRANT_API_KEY:
+        qdrant_client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
+        print("✅ Qdrant initialized")
+    else:
+        print("⚠️ Qdrant credentials missing - RAG disabled")
+except Exception as e:
+    print(f"⚠️ Qdrant initialization failed: {e}")
+
+try:
+    from openai import OpenAI
+    if OPENROUTER_API_KEY:
+        openrouter_client = OpenAI(
+            api_key=OPENROUTER_API_KEY,
+            base_url="https://openrouter.ai/api/v1"
+        )
+        print("✅ OpenRouter initialized")
+    else:
+        print("⚠️ OpenRouter API key missing - AI disabled")
+except Exception as e:
+    print(f"⚠️ OpenRouter initialization failed: {e}")
 
 # In-memory conversation storage
 conversations: Dict[str, List[Dict]] = {}
@@ -95,6 +121,10 @@ def search_knowledge_base(query: str, top_k: int = 5) -> List[Dict]:
     """
     Search Qdrant vector database for relevant documents
     """
+    if not cohere_client or not qdrant_client:
+        print("⚠️ RAG services not available")
+        return []
+    
     try:
         print(f"🔍 Searching for: '{query}'")
         
@@ -132,14 +162,16 @@ def search_knowledge_base(query: str, top_k: int = 5) -> List[Dict]:
     
     except Exception as e:
         print(f"❌ Search error: {e}")
-        import traceback
-        traceback.print_exc()
         return []
 
 def generate_response(query: str, context_docs: List[Dict], conversation_history: List[Dict], selected_text: Optional[str] = None) -> str:
     """
     Generate response using OpenRouter AI
     """
+    if not openrouter_client:
+        print("⚠️ AI service not available - using fallback")
+        return generate_fallback_response(query)
+    
     try:
         print("🤖 Generating response with OpenRouter (Mistral)...")
         
@@ -196,7 +228,7 @@ Please answer the question using the documentation context provided."""
         
         # Add conversation history (if exists)
         if history_messages:
-            messages.extend(history_messages[:-1])  # Exclude current question
+            messages.extend(history_messages[:-1])
         
         # Add current question
         messages.append({"role": "user", "content": user_prompt})
@@ -219,9 +251,25 @@ Please answer the question using the documentation context provided."""
     
     except Exception as e:
         print(f"❌ OpenRouter generation error: {e}")
-        import traceback
-        traceback.print_exc()
-        return "I apologize, but I'm having trouble generating a response. Please try again or rephrase your question."
+        return generate_fallback_response(query)
+
+def generate_fallback_response(query: str) -> str:
+    """
+    Generate simple fallback response when AI is unavailable
+    """
+    query_lower = query.lower()
+    
+    if any(word in query_lower for word in ["hello", "hi", "hey"]):
+        return "Hello! I'm the Humanoid Robotics assistant. I'm currently operating in limited mode. Please check our documentation for detailed information on robotics and AI topics."
+    
+    elif any(word in query_lower for word in ["ros", "ros2", "robot"]):
+        return "I'd love to help with ROS2 and robotics questions! I'm currently in maintenance mode with limited AI capabilities. Please refer to our comprehensive documentation for detailed guides on ROS2, robotics simulation, and humanoid systems."
+    
+    elif any(word in query_lower for word in ["python", "code", "programming"]):
+        return "For programming and coding questions, I recommend checking our documentation which includes practical examples and tutorials on robotics development, ROS2 programming, and AI integration."
+    
+    else:
+        return "Thank you for your question! I'm currently operating with limited capabilities. Please explore our documentation at https://physical-ai-and-humanoids-robotics.vercel.app for comprehensive information on humanoid robotics, physical AI, and related topics."
 
 # ============================================================================
 # API ENDPOINTS
@@ -234,8 +282,13 @@ async def root():
         "status": "healthy",
         "service": "Humanoid Robotics Chatbot API",
         "version": "1.0.0",
-        "ai_backend": "OpenRouter (Mistral DevStral)"
+        "message": "Backend is running!"
     }
+
+@app.get("/health")
+async def health():
+    """Simple health check"""
+    return {"status": "ok"}
 
 @app.post("/api/v1/chat", response_model=ChatResponse)
 async def chat_endpoint(request: ChatRequest):
@@ -313,11 +366,14 @@ async def chat_endpoint(request: ChatRequest):
         )
     
     except Exception as e:
-        print(f"\n❌ CRITICAL ERROR in chat endpoint:")
-        import traceback
-        traceback.print_exc()
-        print("="*60 + "\n")
-        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+        print(f"\n❌ ERROR in chat endpoint: {e}")
+        # Return error response instead of raising exception
+        return ChatResponse(
+            response="I apologize, but I encountered an error. Please try again.",
+            sources=[],
+            timestamp=datetime.now().isoformat(),
+            conversation_id=request.conversation_id
+        )
 
 @app.post("/api/v1/chat/clear")
 async def clear_history(request: ClearRequest):
@@ -332,33 +388,29 @@ async def clear_history(request: ClearRequest):
         return {"status": "success", "message": "No history found"}
     
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        return {"status": "error", "message": str(e)}
 
 @app.get("/api/v1/health")
 async def health_check():
     """
     Health check - verifies all services
     """
-    try:
-        # Check Qdrant
-        collection_info = qdrant_client.get_collection(COLLECTION_NAME)
-        point_count = collection_info.points_count
-        
-        return {
-            "status": "healthy",
-            "qdrant": {
-                "connected": True,
-                "collection": COLLECTION_NAME,
-                "points": point_count
-            },
-            "cohere": {"connected": True},
-            "openrouter": {"connected": True, "model": OPENROUTER_MODEL}
-        }
-    except Exception as e:
-        return {
-            "status": "unhealthy",
-            "error": str(e)
-        }
+    status = {
+        "status": "healthy",
+        "cohere": {"connected": cohere_client is not None},
+        "qdrant": {"connected": qdrant_client is not None},
+        "openrouter": {"connected": openrouter_client is not None, "model": OPENROUTER_MODEL}
+    }
+    
+    if qdrant_client:
+        try:
+            collection_info = qdrant_client.get_collection(COLLECTION_NAME)
+            status["qdrant"]["collection"] = COLLECTION_NAME
+            status["qdrant"]["points"] = collection_info.points_count
+        except Exception as e:
+            status["qdrant"]["error"] = str(e)
+    
+    return status
 
 # ============================================================================
 # RUN SERVER
@@ -366,24 +418,24 @@ async def health_check():
 
 if __name__ == "__main__":
     import uvicorn
+    
+    # Get port from environment (Railway provides this)
+    port = int(os.getenv("PORT", 8000))
+    
     print("\n" + "="*70)
     print("🚀 Starting Humanoid Robotics Chatbot API")
     print("="*70)
-    print(f"📍 API URL: http://localhost:8000")
-    print(f"📚 API Docs: http://localhost:8000/docs")
-    print(f"🔍 Collection: {COLLECTION_NAME}")
+    print(f"📍 Port: {port}")
     print(f"🤖 AI Model: {OPENROUTER_MODEL}")
-    print(f"💾 Qdrant: {QDRANT_URL}")
-    print("="*70)
-    
-    # Check if collection exists
-    try:
-        info = qdrant_client.get_collection(COLLECTION_NAME)
-        print(f"✅ Qdrant collection found: {info.points_count} points")
-    except Exception as e:
-        print(f"⚠️ WARNING: Could not access Qdrant collection")
-        print(f"   Please run the ingestion script first!")
-    
+    print(f"💾 Cohere: {'✅ Available' if cohere_client else '❌ Unavailable'}")
+    print(f"💾 Qdrant: {'✅ Available' if qdrant_client else '❌ Unavailable'}")
+    print(f"🤖 OpenRouter: {'✅ Available' if openrouter_client else '❌ Unavailable'}")
     print("="*70 + "\n")
     
-    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
+    # Run server with production settings
+    uvicorn.run(
+        app, 
+        host="0.0.0.0",  # Must be 0.0.0.0 for Railway
+        port=port,
+        reload=False  # No auto-reload in production
+    )
