@@ -3,6 +3,8 @@ import { MessageCircle, X, Send, Bot, User, Loader2, ExternalLink, Trash2, Spark
 import { v4 as uuidv4 } from 'uuid';
 import TextSelectionHandler from './TextSelectionHandler';
 
+// API Configuration - Railway Backend
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 const HumanoidChatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedTextContext, setSelectedTextContext] = useState(null);
@@ -82,7 +84,7 @@ const HumanoidChatbot = () => {
     setIsTyping(true);
 
     try {
-      const response = await fetch("http://localhost:8000/api/v1/chat", {
+      const response = await fetch(`${API_BASE_URL}/api/v1/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -145,7 +147,7 @@ const HumanoidChatbot = () => {
         localStorage.removeItem('chatbot_messages');
       }
 
-      fetch("http://localhost:8000/api/v1/chat/clear", {
+      fetch(`${API_BASE_URL}/api/v1/chat/clear`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
