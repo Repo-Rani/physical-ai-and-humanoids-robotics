@@ -1,0 +1,240 @@
+# Multi-Language Translation System Specification
+
+## Document Information
+- **Project**: Physical AI & Humanoid Robotics Textbook
+- **Feature**: Multi-Language Translation System
+- **Version**: 1.0.0
+- **Date**: December 30, 2025
+- **Author**: System Architect
+- **Status**: Implementation Ready
+
+---
+
+## 1. Executive Summary
+
+### 1.1 Overview
+Implementation of a comprehensive multi-language translation system for the Physical AI & Humanoid Robotics educational platform. The system will support English (existing), Urdu, and Hindi languages with seamless switching capabilities while maintaining exact styling, structure, and all existing functionality.
+
+### 1.2 User Value Proposition
+Enable global accessibility to advanced robotics education by providing content in multiple languages, specifically targeting Urdu and Hindi speaking students while preserving the high-quality educational experience of the original English content.
+
+### 1.3 Success Criteria
+- [ ] Students can seamlessly switch between English, Urdu, and Hindi content
+- [ ] All existing functionality remains unchanged
+- [ ] Urdu content displays properly with RTL (right-to-left) layout
+- [ ] Hindi content displays properly with LTR (left-to-right) layout
+- [ ] Translation quality maintains technical accuracy
+- [ ] Navigation preserves user position across language switches
+- [ ] All styling and components remain consistent across languages
+- [ ] Authentication and chatbot functionality remain unaffected
+
+---
+
+## 2. User Scenarios & Testing
+
+### 2.1 Primary User Journey
+1. User visits the Physical AI & Humanoid Robotics textbook website
+2. User sees content in default English language
+3. User clicks on language dropdown in navbar to select Urdu or Hindi
+4. Entire UI (content, sidebar, navigation) switches to selected language
+5. User can continue reading with preserved position in chapter structure
+6. User can switch back to English or to third language as needed
+
+### 2.2 Secondary User Journey
+1. User navigates to specific chapter in English
+2. User clicks "Read in Urdu" button at start of chapter
+3. Current page switches to Urdu while maintaining position
+4. User continues reading in Urdu
+
+### 2.3 Acceptance Criteria
+- [ ] Language switching works for all content pages
+- [ ] Navbar language dropdown persists selection across navigation
+- [ ] Chapter-level translation button works independently
+- [ ] RTL layout renders correctly for Urdu content
+- [ ] All existing components (PersonalizeButton, Chatbot, etc.) continue to function
+- [ ] Sidebar translates to match selected language
+- [ ] Navigation maintains chapter position during language switches
+
+---
+
+## 3. Functional Requirements
+
+### 3.1 Language Support Requirements
+- **REQ-1**: System MUST support three languages: English (en), Urdu (ur), Hindi (hi)
+- **REQ-2**: System MUST maintain English as default locale
+- **REQ-3**: System MUST provide RTL (right-to-left) support for Urdu content
+- **REQ-4**: System MUST preserve LTR (left-to-right) support for English and Hindi content
+- **REQ-5**: System MUST maintain all existing functionality while adding multilingual support
+
+### 3.2 Content Management Requirements
+- **REQ-6**: System MUST preserve all original English content in /docs without modification
+- **REQ-7**: System MUST store translated content in /i18n/{locale}/docusaurus-plugin-content-docs/current/ structure
+- **REQ-8**: System MUST preserve all frontmatter (sidebar_position, title, description) in translations
+- **REQ-9**: System MUST preserve all import statements (ReadingTime, PersonalizeButton, etc.) in translations
+- **REQ-10**: System MUST preserve all markdown elements (:::tip, :::caution, etc.) in translations
+
+### 3.3 UI/UX Requirements
+- **REQ-11**: System MUST provide navbar language dropdown positioned left of Login/Signup buttons
+- **REQ-12**: System MUST provide chapter-level translation button with orange gradient styling
+- **REQ-13**: System MUST maintain user position in chapter structure during language switches
+- **REQ-14**: System MUST persist language selection across page navigation
+- **REQ-15**: System MUST maintain all existing styling (orange/white color scheme)
+
+### 3.4 Technical Requirements
+- **REQ-16**: System MUST implement Docusaurus i18n configuration with locale support
+- **REQ-17**: System MUST implement TranslateButton component with proper routing
+- **REQ-18**: System MUST handle RTL CSS for Urdu content without affecting other languages
+- **REQ-19**: System MUST ensure all existing components continue to function
+- **REQ-20**: System MUST maintain build process without errors
+
+---
+
+## 4. Non-Functional Requirements
+
+### 4.1 Performance Requirements
+- **REQ-21**: Language switching MUST occur within 1 second
+- **REQ-22**: Page load times MUST not increase by more than 10% after implementation
+- **REQ-23**: Build process MUST complete within existing time constraints
+
+### 4.2 Compatibility Requirements
+- **REQ-24**: System MUST maintain compatibility with existing authentication system
+- **REQ-25**: System MUST maintain compatibility with existing chatbot functionality
+- **REQ-26**: System MUST maintain compatibility with all existing components
+- **REQ-27**: System MUST maintain compatibility with existing database schemas
+
+### 4.3 Accessibility Requirements
+- **REQ-28**: System MUST maintain WCAG 2.1 Level AA compliance
+- **REQ-29**: System MUST provide proper RTL support for Urdu content
+- **REQ-30**: System MUST maintain all existing accessibility features
+
+---
+
+## 5. Success Criteria
+
+### 5.1 Quantitative Measures
+- [ ] 100% of original English content remains unchanged
+- [ ] 100% of translated content is available in Urdu and Hindi
+- [ ] Language switching functionality works on 100% of content pages
+- [ ] Build process completes successfully without errors
+- [ ] All existing tests continue to pass
+
+### 5.2 Qualitative Measures
+- [ ] User experience is seamless when switching between languages
+- [ ] Content quality and technical accuracy are maintained in translations
+- [ ] Navigation and user position are preserved during language switches
+- [ ] All styling and visual elements remain consistent across languages
+- [ ] RTL layout renders properly for Urdu content
+
+### 5.3 User Satisfaction Measures
+- [ ] Students can access content in their preferred language
+- [ ] Language switching does not interrupt learning flow
+- [ ] Technical terminology is accurately translated while maintaining clarity
+- [ ] All educational functionality remains accessible in all supported languages
+
+---
+
+## 6. Key Entities
+
+### 6.1 Content Entities
+- **EnglishContent**: Original content in /docs directory (unchanged)
+- **UrduContent**: Translated content in /i18n/ur/ directory with RTL support
+- **HindiContent**: Translated content in /i18n/hi/ directory with LTR support
+- **TranslationMapping**: Relationship between original and translated content by path
+
+### 6.2 UI Components
+- **LanguageDropdown**: Navbar component for language selection
+- **TranslateButton**: Chapter-level component for language switching
+- **LocaleManager**: System component managing current language state
+
+### 6.3 Configuration Entities
+- **LocaleConfig**: Docusaurus i18n configuration for language support
+- **RoutingConfig**: URL routing configuration for language paths
+- **StylingConfig**: CSS configuration for RTL/LTR layouts
+
+---
+
+## 7. Assumptions & Dependencies
+
+### 7.1 Technical Assumptions
+- [ ] Docusaurus 3.0+ supports the required i18n functionality
+- [ ] Existing build process can accommodate additional language files
+- [ ] Current hosting solution supports multilingual content delivery
+- [ ] Available translation resources will maintain technical accuracy
+
+### 7.2 Business Assumptions
+- [ ] Target audience includes Urdu and Hindi speaking students
+- [ ] Multilingual support will increase platform accessibility
+- [ ] Translation quality can be maintained at technical accuracy standards
+- [ ] Maintenance of multiple language versions is sustainable
+
+### 7.3 Dependencies
+- [ ] Docusaurus i18n plugin functionality
+- [ ] Translation team for content translation
+- [ ] RTL CSS framework support
+- [ ] Development resources for implementation
+
+---
+
+## 8. Risks & Mitigation
+
+### 8.1 Technical Risks
+- **Risk**: RTL layout may conflict with existing CSS
+  - **Mitigation**: Implement RTL styles in separate CSS file with proper selectors
+- **Risk**: Language switching may break existing functionality
+  - **Mitigation**: Preserve all existing components and test thoroughly
+- **Risk**: Build process may slow down with additional language files
+  - **Mitigation**: Optimize build configuration for multilingual support
+
+### 8.2 Content Risks
+- **Risk**: Technical terminology may not translate accurately
+  - **Mitigation**: Maintain glossary of technical terms with proper translations
+- **Risk**: Content synchronization between languages may drift
+  - **Mitigation**: Establish content update process that includes all languages
+
+### 8.3 User Experience Risks
+- **Risk**: Language switching may confuse users
+  - **Mitigation**: Provide clear UI indicators of current language
+- **Risk**: Navigation may become inconsistent across languages
+  - **Mitigation**: Maintain identical navigation structure across all languages
+
+---
+
+## 9. Out of Scope
+
+### 9.1 Explicitly Excluded Features
+- [ ] Real-time translation (all content must be pre-translated)
+- [ ] Additional languages beyond English, Urdu, and Hindi
+- [ ] Voice-based content consumption
+- [ ] Offline content download for translated content
+- [ ] User-generated translations or community translation platform
+
+### 9.2 Protected Components
+- [ ] All existing authentication flows remain unchanged
+- [ ] All existing database schemas remain unchanged
+- [ ] All existing chatbot functionality remains unchanged
+- [ ] All existing environment variables remain unchanged
+- [ ] All existing API endpoints remain unchanged
+
+---
+
+## 10. Implementation Constraints
+
+### 10.1 Technical Constraints
+- [ ] Original English content in /docs directory must remain unchanged
+- [ ] All existing functionality must continue to work without modification
+- [ ] Build process must remain stable and reliable
+- [ ] Authentication system must remain unaffected
+- [ ] Existing component architecture must be preserved
+
+### 10.2 Quality Constraints
+- [ ] Technical accuracy must be maintained in all translations
+- [ ] All styling and visual elements must remain consistent
+- [ ] Performance must not degrade significantly
+- [ ] Accessibility standards must be maintained or improved
+- [ ] User experience must be seamless across all languages
+
+### 10.3 Timeline Constraints
+- [ ] Implementation must not break existing functionality
+- [ ] Testing must validate all existing features continue to work
+- [ ] Translation quality must meet educational standards
+- [ ] RTL layout must be fully functional for Urdu content

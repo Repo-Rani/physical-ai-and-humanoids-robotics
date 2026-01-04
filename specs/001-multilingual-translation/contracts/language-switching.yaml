@@ -1,0 +1,120 @@
+# API Contract: Language Switching Service
+
+## Overview
+This contract defines the language switching functionality for the multilingual Docusaurus documentation site. Since this is primarily a static site with client-side language switching, the "API" consists of URL routing patterns and client-side functions.
+
+## Language Switching Endpoints
+
+### GET /{locale}/{path}
+**Description**: Serves content in the specified locale for the given path
+
+**Path Parameters**:
+- `locale`: string (en|ur|hi) - The target language
+- `path`: string - The content path (e.g., introduction/welcome, ros2/architecture)
+
+**Request Example**:
+```
+GET /ur/introduction/welcome
+GET /hi/ros2/architecture
+GET /en/simulation/gazebo
+```
+
+**Response**:
+- Content-Type: text/html
+- Status: 200 OK
+- Body: HTML page with content in specified locale
+
+**Headers**:
+- Accept-Language: {locale} (optional client hint)
+- Content-Language: {locale} (server response)
+
+### Client-Side Language Switching Function
+
+```typescript
+interface LanguageSwitcher {
+  /**
+   * Switches the current page to the specified locale
+   * @param targetLocale - Target language code (en|ur|hi)
+   * @param currentPagePath - Current page path without locale prefix
+   * @returns Promise that resolves when language switch is complete
+   */
+  switchLanguage(targetLocale: 'en' | 'ur' | 'hi', currentPagePath: string): Promise<void>;
+
+  /**
+   * Gets the current locale
+   * @returns Current language code
+   */
+  getCurrentLocale(): 'en' | 'ur' | 'hi';
+
+  /**
+   * Checks if a translation exists for the given path and locale
+   * @param locale - Language code to check
+   * @param path - Content path to check
+   * @returns True if translation exists, false otherwise
+   */
+  hasTranslation(locale: 'en' | 'ur' | 'hi', path: string): boolean;
+}
+```
+
+## Locale Configuration API
+
+### GET /api/locale/config
+**Description**: Returns locale configuration including direction, labels, and RTL support
+
+**Response Schema**:
+```json
+{
+  "locales": {
+    "en": {
+      "label": "English",
+      "direction": "ltr",
+      "htmlLang": "en-US",
+      "rtlSupport": false
+    },
+    "ur": {
+      "label": "اردو",
+      "direction": "rtl",
+      "htmlLang": "ur-PK",
+      "rtlSupport": true
+    },
+    "hi": {
+      "label": "हिंदी",
+      "direction": "ltr",
+      "htmlLang": "hi-IN",
+      "rtlSupport": false
+    }
+  },
+  "defaultLocale": "en",
+  "currentLocale": "en"
+}
+```
+
+## Error Handling
+
+### 404 - Translation Not Available
+When a requested translation doesn't exist, the system should:
+1. Redirect to the English version of the content
+2. Display a notification that the translation is not yet available
+3. Maintain the user's navigation context
+
+### 301 - Permanent Redirect
+When accessing a locale that doesn't exist:
+- Status: 301 Moved Permanently
+- Location: /en/{path} (fallback to English)
+
+## Content Consistency
+
+### Frontmatter Requirements
+All translated content must preserve the original frontmatter:
+```yaml
+---
+sidebar_position: 1
+title: "Title in target language"
+description: "Description in target language"
+---
+```
+
+### Validation Rules
+- All translated pages must maintain the same sidebar_position as the original
+- Navigation structure must be preserved across all locales
+- Code examples and technical content must maintain accuracy

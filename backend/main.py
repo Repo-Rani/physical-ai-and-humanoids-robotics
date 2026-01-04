@@ -46,6 +46,7 @@ except Exception as e:
 
 try:
     from qdrant_client import QdrantClient
+    from qdrant_client.models import SearchRequest  # Add this line
     if QDRANT_URL and QDRANT_API_KEY:
         qdrant_client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
         print("✅ Qdrant initialized")
@@ -137,12 +138,16 @@ def search_knowledge_base(query: str, top_k: int = 5) -> List[Dict]:
         
         print(f"✅ Query embedded successfully")
         
-        # Search in Qdrant
-        search_results = qdrant_client.search(
+        # ✅ FIXED: Search in Qdrant with correct method
+        search_result = qdrant_client.query_points(
             collection_name=COLLECTION_NAME,
-            query_vector=query_embedding,
-            limit=top_k
+            query=query_embedding,
+            limit=top_k,
+            with_payload=True
         )
+        
+        # Extract points from result
+        search_results = search_result.points if hasattr(search_result, 'points') else []
         
         print(f"✅ Found {len(search_results)} results from Qdrant")
         
@@ -162,8 +167,9 @@ def search_knowledge_base(query: str, top_k: int = 5) -> List[Dict]:
     
     except Exception as e:
         print(f"❌ Search error: {e}")
+        import traceback
+        traceback.print_exc()
         return []
-
 def generate_response(query: str, context_docs: List[Dict], conversation_history: List[Dict], selected_text: Optional[str] = None) -> str:
     """
     Generate response using OpenRouter AI
@@ -420,7 +426,8 @@ if __name__ == "__main__":
     import uvicorn
     
     # Get port from environment (Railway provides this)
-    port = int(os.getenv("PORT", 8000))
+    port = int(os.getenv("PORT", 8080))
+
     
     print("\n" + "="*70)
     print("🚀 Starting Humanoid Robotics Chatbot API")
