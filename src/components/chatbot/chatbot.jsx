@@ -2,10 +2,13 @@ import React, { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Bot, User, Loader2, ExternalLink, Trash2, Sparkles } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import TextSelectionHandler from './TextSelectionHandler';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+
 
 // API Configuration - Railway Backend
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 const HumanoidChatbot = () => {
+  const {siteConfig} = useDocusaurusContext();
+  const API_BASE_URL = siteConfig.customFields?.API_BASE_URL || 'http://localhost:8000';
   const [isOpen, setIsOpen] = useState(false);
   const [selectedTextContext, setSelectedTextContext] = useState(null);
   const [input, setInput] = useState('');
